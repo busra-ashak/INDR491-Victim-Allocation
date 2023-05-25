@@ -104,7 +104,13 @@ class Parameters:
     def hospital_id_lists(hospital_dict):
         return list(hospital_dict.keys())
     
-    def distances(db_cursor, victim_dict, hospital_dict):
+    def hospital_bed_capacity_lists(hospital_dict):
+        bed_capacity_list = []
+        for value in hospital_dict.values():
+            bed_capacity_list.append(value[2])
+        return bed_capacity_list
+    
+    def distances(victim_dict, hospital_dict):
         neighbourhood_locations = {}
         neighbourhood_list = []
         for value in victim_dict.values():

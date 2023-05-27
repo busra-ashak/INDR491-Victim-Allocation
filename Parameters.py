@@ -14,18 +14,22 @@ class Parameters:
         db_cursor.execute("USE earthquake")
         return db_cursor
     
-    def num_of_immediate(db_cursor):
+    def num_of_immediate(db_cursor, start_time, end_time):
         db_cursor.execute("""SELECT COUNT(*) 
-                        FROM VICTIM V, FIRSTAID F
-                        WHERE V.victim_id = F.victim_id AND victim_condition = 3""")
+                        FROM VICTIM V, FIRSTAID F, MCI M
+                        WHERE V.victim_id = F.victim_id AND victim_condition = 3 
+                        AND TIMESTAMPDIFF(MINUTE, MCI_datetime, applied_datetime) >= {s} 
+                        AND TIMESTAMPDIFF(MINUTE, MCI_datetime, applied_datetime) < {e}""".format(s = start_time, e = end_time))
         # # of immediate victims
         K = db_cursor.fetchall()[0][0]
         return K
     
-    def num_of_delayed(db_cursor):
+    def num_of_delayed(db_cursor, start_time, end_time):
         db_cursor.execute("""SELECT COUNT(*) 
-                     FROM VICTIM V, FIRSTAID F
-                     WHERE V.victim_id = F.victim_id AND victim_condition = 2""")
+                     FROM VICTIM V, FIRSTAID F, MCI M
+                     WHERE V.victim_id = F.victim_id AND victim_condition = 2 
+                     AND TIMESTAMPDIFF(MINUTE, MCI_datetime, applied_datetime) >= {s} 
+                     AND TIMESTAMPDIFF(MINUTE, MCI_datetime, applied_datetime) < {e}""".format(s = start_time, e = end_time))
         # # of delayed victims
         L = db_cursor.fetchall()[0][0]
         return L
@@ -38,11 +42,13 @@ class Parameters:
         H = db_cursor.fetchall()[0][0]
         return H
 
-    def victim_dict(db_cursor):
+    def victim_dict(db_cursor, start_time, end_time):
         db_cursor.execute("""SELECT V.victim_id, (victim_age_min+victim_age_max)/2, TIMESTAMPDIFF(MINUTE, MCI_datetime, applied_datetime), R.latitude, R.longitude, R.neighbourhood, victim_condition
                      FROM VICTIM V, MCI M, RESCUE R, FIRSTAID F
                      WHERE V.MCI_id = M.MCI_id AND V.victim_id = F.victim_id 
-                     AND V.victim_id = R.victim_id AND (victim_condition = 2 OR victim_condition = 3)""")
+                     AND V.victim_id = R.victim_id AND (victim_condition = 2 OR victim_condition = 3) 
+                     AND TIMESTAMPDIFF(MINUTE, MCI_datetime, applied_datetime) >= {s} 
+                     AND TIMESTAMPDIFF(MINUTE, MCI_datetime, applied_datetime) < {e}""".format(s = start_time, e = end_time))
         #victim: id, age, time passed, location, condition
         victim_info = db_cursor.fetchall()
         victim_dict = {}

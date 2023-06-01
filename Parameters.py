@@ -97,7 +97,7 @@ class Parameters:
         return neighbourhood_immediate_list, neighbourhood_delayed_list
     
     def hospital_dict(db_cursor):
-        db_cursor.execute("""SELECT hospital_id, latitude, longitude, bed_capacity
+        db_cursor.execute("""SELECT hospital_id, hospital_name, latitude, longitude, bed_capacity
                      FROM HOSPITAL_MASTER
                      WHERE is_operational = 1""")
         #hospital: id, location, capacity
@@ -110,10 +110,16 @@ class Parameters:
     def hospital_id_lists(hospital_dict):
         return list(hospital_dict.keys())
     
+    def hospital_name_lists(hospital_dict):
+        hospital_name_list = []
+        for value in hospital_dict.values():
+            hospital_name_list.append(value[0])
+        return hospital_name_list
+    
     def hospital_bed_capacity_lists(hospital_dict):
         bed_capacity_list = []
         for value in hospital_dict.values():
-            bed_capacity_list.append(value[2])
+            bed_capacity_list.append(value[3])
         return bed_capacity_list
     
     def distances(victim_dict, hospital_dict):
@@ -129,8 +135,8 @@ class Parameters:
             for key2, value2 in hospital_dict.items():
                 neighbourhood = neighbourhood_list.index(key1)
                 hospital_id = hospital_list.index(key2)
-                latitude_diff = abs(value1[0] - value2[0])*100
-                longitude_diff = abs(value1[0] - value2[0])*100
+                latitude_diff = abs(value1[0] - value2[1])*100
+                longitude_diff = abs(value1[1] - value2[2])*100
                 distances[neighbourhood][hospital_id] = np.sqrt(latitude_diff**2 + longitude_diff**2)
         return neighbourhood_list, hospital_list, distances
     

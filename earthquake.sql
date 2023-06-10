@@ -73,6 +73,35 @@ LOCK TABLES `CEMETERY_MASTER` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `BURIAL`
+--
+
+DROP TABLE IF EXISTS `BURIAL`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `BURIAL` (
+  `cemetery_id` int NOT NULL,
+  `victim_id` varchar(30) NOT NULL,
+  `burial_datetime` datetime NOT NULL,
+  `grave_number` smallint unsigned DEFAULT NULL,
+  `description` varchar(256) DEFAULT NULL,
+  PRIMARY KEY (`cemetery_id`,`victim_id`),
+  KEY `victim_id_idx` (`victim_id`),
+  CONSTRAINT `cemetery_id` FOREIGN KEY (`cemetery_id`) REFERENCES `CEMETERY_MASTER` (`cemetery_id`),
+  CONSTRAINT `victim_id` FOREIGN KEY (`victim_id`) REFERENCES `VICTIM` (`victim_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `BURIAL`
+--
+
+LOCK TABLES `BURIAL` WRITE;
+/*!40000 ALTER TABLE `BURIAL` DISABLE KEYS */;
+/*!40000 ALTER TABLE `BURIAL` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `CLINIC`
 --
 
